@@ -1,10 +1,10 @@
 # 📊 Expenses Tracker — Учёт расходов через Telegram бот и API
 
-![Python](https://img.shields.io/badge/Python-3.11-blue)
-![FastAPI](https://img.shields.io/badge/FastAPI-0.104-green)
-![Aiogram](https://img.shields.io/badge/Aiogram-3.0-red)
-![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-2.0-orange)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-blue)
+![Python](https://img.shields.io/badge/Python-3.13-blue)
+![FastAPI](https://img.shields.io/badge/FastAPI-green)
+![Aiogram](https://img.shields.io/badge/Aiogram-red)
+![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-orange)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue)
 ![Docker](https://img.shields.io/badge/Docker-✔️-blue)
 
 **Expenses Tracker** — приложение для учёта личных расходов с двумя интерфейсами: Telegram бот и REST API.
