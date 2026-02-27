@@ -1,1 +1,1 @@
-# expenses_not
+# expenses_tracker_bot
