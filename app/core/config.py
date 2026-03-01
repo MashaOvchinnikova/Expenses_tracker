@@ -1,5 +1,6 @@
 from typing import Optional, Any
 
+from pydantic import SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
@@ -10,23 +11,26 @@ class Settings(BaseSettings):
        или из переменных окружения системы.
     """
     # Telegram
-    BOT_TOKEN: str
+    BOT_TOKEN: SecretStr
 
     # Database - либо готовая строка, либо компоненты
     DATABASE_URL: Optional[str] = None
     POSTGRES_USER: str
-    POSTGRES_PASSWORD: str
-    POSTGRES_DB: str = "expense_tracker"
-    POSTGRES_HOST: str = "localhost"
-    POSTGRES_PORT: int = 5432
+    POSTGRES_PASSWORD: SecretStr
+    POSTGRES_DB: str
+    POSTGRES_HOST: str
+    POSTGRES_PORT: int
 
     # App
-    DEBUG: bool = False
-    SECRET_KEY: str = "default-secret-key"
-    API_V1_PREFIX: str = "/api/v1"
+    DEBUG: bool
+    API_V1_PREFIX: str
 
-    # Асинхронный URL (опционально)
-    DATABASE_URL_ASYNC: Optional[str] = None
+    # JWT Settings
+    SECRET_KEY: str = SecretStr
+    ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    REFRESH_TOKEN_EXPIRE_DAYS: int = 7
+
 
     model_config = SettingsConfigDict(
         env_file=".env",  # загружаем из .env
@@ -40,15 +44,8 @@ class Settings(BaseSettings):
         # Если DATABASE_URL не указан, собираем из компонентов
         if not self.DATABASE_URL:
             self.DATABASE_URL = (
-                f"postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}"
+                f"postgresql+asyncpg://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD.get_secret_value()}"
                 f"@{self.POSTGRES_HOST}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
-            )
-
-        # Создаем асинхронный URL для будущих задач
-        if not self.DATABASE_URL_ASYNC:
-            self.DATABASE_URL_ASYNC = self.DATABASE_URL.replace(
-                'postgresql://',
-                'postgresql+asyncpg://'
             )
 
 def get_settings() -> BaseSettings:
@@ -57,12 +54,3 @@ def get_settings() -> BaseSettings:
 
 # Глобальный объект настроек
 settings = get_settings()
-
-# Для отладки
-if settings.DEBUG:
-    print("Настройки загружены:")
-    print(f"BOT_TOKEN: {'*' * 10}{settings.BOT_TOKEN[-5:] if settings.BOT_TOKEN else 'не указан'}")
-    print(f"DATABASE_URL: {settings.DATABASE_URL}")
-    print(f"POSTGRES_USER: {settings.POSTGRES_USER}")
-    print(f"POSTGRES_DB: {settings.POSTGRES_DB}")
-    print(f"DEBUG: {settings.DEBUG}")
