@@ -1,15 +1,17 @@
 from datetime import datetime
+from typing import Optional
 
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core import Base, NotificationType, NotificationPriority, NotificationCategory
-from app.models import User, Expense, Budget
 
 class Notification(Base):
     """
     Модель уведомления
     """
+    __tablename__ = "notifications"
+
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
     type: Mapped[NotificationType] = mapped_column(default=NotificationType.INFO)
     priority: Mapped[NotificationPriority] = mapped_column(default=NotificationPriority.LOW)
@@ -32,9 +34,9 @@ class Notification(Base):
         nullable=True
     )
 
-    user: Mapped[User] = relationship("User", back_populates="notifications")
-    expense: Mapped[Expense | None] = relationship("Expense")
-    budget: Mapped[Budget | None] = relationship("Budget")
+    user: Mapped["User"] = relationship("User", back_populates="notifications")
+    expense: Mapped[Optional["Expense"]] = relationship("Expense",)
+    budget: Mapped[Optional["Budget"]] = relationship("Budget")
 
     def __repr__(self) -> str:
         return f"<Notification {self.type}: {self.title}>"

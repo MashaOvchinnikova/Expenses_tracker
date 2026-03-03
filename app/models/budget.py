@@ -4,13 +4,13 @@ from sqlalchemy import ForeignKey, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core import Base, ReportPeriod, Currency
-from app.models import User, Category
-
 
 class Budget(Base):
     """
     Модель бюджета
     """
+    __tablename__ = "budgets"
+
     __table_args__ = (
         UniqueConstraint('user_id', 'category_id', 'period_start', name='unique_budget_per_period'),
     )
@@ -27,11 +27,11 @@ class Budget(Base):
     notify_at: Mapped[int]
     last_notification_sent: Mapped[datetime | None]
 
-    user: Mapped[User] = relationship(
+    user: Mapped["User"] = relationship(
         "User",
         back_populates="budgets"
     )
-    category: Mapped[Category] = relationship(
+    category: Mapped["Category"] = relationship(
         "Category",
         back_populates="budgets"
     )

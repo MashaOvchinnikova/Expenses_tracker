@@ -3,7 +3,6 @@ from datetime import datetime
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.models import User, Category
 from app.core import Base
 
 
@@ -11,17 +10,19 @@ class Expense(Base):
     """
     Модель расхода
     """
+    __tablename__ = "expenses"
+
     amount: Mapped[float]
     description: Mapped[str | None]
     expense_date: Mapped[datetime] = mapped_column(default=datetime.now)
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id', ondelete="CASCADE"))
     category_id: Mapped[int] = mapped_column(ForeignKey('categories.id', ondelete="SET NULL"))
 
-    user: Mapped[User] = relationship(
+    user: Mapped["User"] = relationship(
         "User",
         back_populates="expenses"
     )
-    category: Mapped[Category] = relationship(
+    category: Mapped["Category"] = relationship(
         "Category",
         back_populates="expenses")
 
